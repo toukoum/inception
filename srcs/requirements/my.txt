@@ -1,0 +1,6 @@
+docker container rm -f $(docker container ls -aq)
+docker image rm -f $(docker image ls -aq)
+
+docker exec -it nginx_container /bin/bash
+curl -I wordpress:9000
+
