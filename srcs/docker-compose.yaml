@@ -35,8 +35,7 @@ services:
 
   wordpress:
     container_name: wordpress
-    env_file:
-      - .env
+    env_file: .env
     volumes:
     - wordpress:/var/www/wordpress
     networks:

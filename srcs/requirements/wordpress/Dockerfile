@@ -10,15 +10,15 @@ RUN apt-get update -y && \
         php-mysql \
         php-cli \
         php-mbstring \
-        php-gettext \
+        gettext \
         mariadb-client \
         curl && \
-    rm -rf /etc/php/7.3/fpm/pool.d/www.conf && \
+    rm -rf /etc/php/7.4/fpm/pool.d/www.conf && \
     mkdir -p /run/php
 
 # SCRIPTS & CONFS
 COPY ./tools/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
@@ -28,4 +28,3 @@ EXPOSE 9000
 
 # Démarre le script de configuration automatique puis PHP-FPM
 ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
-# CMD ["php-fpm7.3", "-F"]
