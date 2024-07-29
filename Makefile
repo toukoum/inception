@@ -8,20 +8,20 @@ all: up
 init:
 	mkdir -p $(WORDPRESS_VOLUME_PATH)
 	mkdir -p $(MARIADB_VOLUME_PATH)
-	sudo chown -R $(shell id -u):$(shell id -g) $(WORDPRESS_VOLUME_PATH)
-	sudo chown -R $(shell id -u):$(shell id -g) $(MARIADB_VOLUME_PATH)
+	# sudo chown -R $(shell id -u):$(shell id -g) $(WORDPRESS_VOLUME_PATH)
+	# sudo chown -R $(shell id -u):$(shell id -g) $(MARIADB_VOLUME_PATH)
 
 up: init
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d --build
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) logs -f 
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) logs -f
 
 down:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down
 
 clean:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans
-	# docker image rm -f $(shell docker image ls -aq)
-	# docker container rm -f $(shell docker container ls -aq)
+	docker image rm -f $(shell docker image ls -aq)
+	docker container rm -f $(shell docker container ls -aq)
 
 fclean: clean
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) rm -f -v

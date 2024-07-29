@@ -20,4 +20,3 @@ EXPOSE 3306
 
 # Utilise le script d'entrée comme commande par défaut
 ENTRYPOINT ["/entrypoint.sh"]
-

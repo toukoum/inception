@@ -1,9 +1,5 @@
-
-
-
 services:
   mariadb:
-    image: mariadb
     container_name: mariadb
     volumes: 
       - mariadb:/var/lib/mysql
@@ -17,14 +13,14 @@ services:
 
 
   nginx:           # with TLSv.1.2
-    image: nginx
-    container_name: nginx # name of the container
+    container_name: nginx
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress:$WP_PATH
     networks:
       - inception
     depends_on:
       - wordpress
+      - toukoum
     build: 
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -37,13 +33,49 @@ services:
     container_name: wordpress
     env_file: .env
     volumes:
-    - wordpress:/var/www/wordpress
+    - wordpress:$WP_PATH
     networks:
       - inception
     build: ./requirements/wordpress
-    depends_on:    # wordpress will be started after mariadb
+    depends_on:
       - mariadb
+      - redis 
     restart: on-failure
+
+
+  #bonus
+  redis:
+    container_name: redis
+    env_file:
+      - .env
+    networks:
+      - inception
+    build: ./requirements/bonus/redis
+    restart: on-failure
+
+  ftp:
+    container_name: ftp
+    build: ./requirements/bonus/ftp
+    ports:
+      - "21:21"
+      - "40000-40005:40000-40005"
+    env_file: .env
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress:/home/nekfeu/wordpress
+    restart: on-failure
+
+
+  toukoum:
+    build: ./requirements/bonus/toukoum
+    container_name: toukoum
+    networks:
+      - inception
+
+
 
 volumes:
   wordpress:
