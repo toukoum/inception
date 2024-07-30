@@ -1,16 +1,26 @@
 FROM debian:bullseye
 
-RUN apt update -y && apt upgrade -y && \
-    apt install -y vsftpd
+ARG FTP_USER
+ARG FTP_PASSWORD
 
-# COPY ./tools/vsftpd.conf /etc/vsftpd.conf
+ENV FTP_USER=${FTP_USER}
+ENV FTP_PASSWORD=${FTP_PASSWORD}
 
-# RUN mkdir -p /var/run/vsftpd/empty
+RUN apt-get update && \
+    apt-get install -y vsftpd && \
+    apt-get clean
 
-# Script d'entrée pour configurer l'utilisateur et démarrer vsftpd
-COPY ./tools/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY tools/vsftpd.conf /etc/vsftpd.conf
+
+RUN useradd -m -d /home/nekfeu -s /bin/bash nekfeu && \
+    echo "${FTP_USER}:${FTP_PASSWORD}" | chpasswd
+
+RUN mkdir -p /home/nekfeu/wordpress && \
+    chown -R nekfeu:nekfeu /home/nekfeu
+
+RUN mkdir -p /var/run/vsftpd/empty
 
 EXPOSE 21
+EXPOSE 10000-10100
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+CMD /usr/sbin/vsftpd /etc/vsftpd.conf

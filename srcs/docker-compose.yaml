@@ -9,7 +9,7 @@ services:
       context: requirements/mariadb
       dockerfile: Dockerfile
     env_file: .env
-    restart: on-failure # "on-failure", container will be restarted 
+    restart: on-failure
 
 
   nginx:           # with TLSv.1.2
@@ -28,6 +28,8 @@ services:
     ports:
       - "443:443"
     restart: on-failure
+    expose:
+      - 80
 
   wordpress:
     container_name: wordpress
@@ -39,8 +41,10 @@ services:
     build: ./requirements/wordpress
     depends_on:
       - mariadb
-      - redis 
+      - redis
     restart: on-failure
+    expose:
+    - 9000
 
 
   #bonus
@@ -52,13 +56,18 @@ services:
       - inception
     build: ./requirements/bonus/redis
     restart: on-failure
+    expose:
+      - 6379
 
   ftp:
     container_name: ftp
-    build: ./requirements/bonus/ftp
+    build:
+      context: ./requirements/bonus/ftp
+      args:
+        FTP_USER: ${FTP_USER}
+        FTP_PASSWORD: ${FTP_PASSWORD}
     ports:
       - "21:21"
-      - "40000-40005:40000-40005"
     env_file: .env
     networks:
       - inception
@@ -74,7 +83,52 @@ services:
     container_name: toukoum
     networks:
       - inception
+    restart: on-failure
+    expose:
+      - 80
 
+
+  adminer:
+    container_name: adminer
+    build: ./requirements/bonus/adminer
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+    restart: on-failure
+    ports:
+      - "4321:4321"
+
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ./requirements/bonus/prometheus
+      args:
+        PROMETHEUS_VERSION: ${PROMETHEUS_VERSION}
+        CONFIG_DIR: ${CONFIG_DIR}
+        DATA_DIR: ${DATA_DIR}
+    ports:
+      - "9090:9090"
+    volumes:
+      - /data/prometheus:/var/lib/prometheus
+    networks:
+      - inception
+    restart: on-failure
+    depends_on:
+      - wordpress
+  
+  grafana:
+    build: ./requirements/bonus/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - inception
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - prometheus
 
 
 volumes:
