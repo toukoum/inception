@@ -7,4 +7,3 @@ RUN rm -rf /usr/share/nginx/html
 RUN git clone https://github.com/toukoum/portfolio.git /usr/share/nginx/html
 
 EXPOSE 80
-

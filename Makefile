@@ -13,7 +13,7 @@ init:
 
 up: init
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) logs -f
+	# $(DOCKER_COMPOSE) -f $(COMPOSE_FILE) logs -f
 
 down:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down
