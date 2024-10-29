@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 echo "Starting WordPress configuration"
 
 # Afficher les variables d'environnement pour débogage

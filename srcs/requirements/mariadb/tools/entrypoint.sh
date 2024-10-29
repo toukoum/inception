@@ -15,7 +15,6 @@ fi
 
 mysqld_safe --datadir=/var/lib/mysql &
 
-# Attendre que MariaDB soit disponible
 until mysqladmin ping --silent; do
     echo "Waiting for MariaDB..."
     sleep 2
